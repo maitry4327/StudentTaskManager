@@ -1,0 +1,791 @@
+﻿@using StudentTaskManager.Models
+
+@{
+    ViewData["Title"] = "Dashboard";
+
+    var recentAssignments = ViewBag.RecentAssignments as List<Assignment>
+        ?? new List<Assignment>();
+
+    int total = ViewBag.TotalAssignments ?? 0;
+    int pending = ViewBag.PendingAssignments ?? 0;
+    int completed = ViewBag.CompletedAssignments ?? 0;
+    int overdue = ViewBag.OverdueAssignments ?? 0;
+
+    double completionRate = total > 0
+        ? Math.Round((double)completed / total * 100)
+        : 0;
+
+    string studentName = Context.Session.GetString("StudentName") ?? "Student";
+}
+
+<style>
+    /* Dashboard main theme */
+    .dashboard-page {
+        --primary: #5b5ce2;
+        --primary-dark: #4445c7;
+        --ink: #202544;
+        --muted: #7c829e;
+        --surface: #ffffff;
+        --background: #f5f6fc;
+        color: var(--ink);
+        padding: 12px 0 35px;
+    }
+
+        .dashboard-page * {
+            box-sizing: border-box;
+        }
+
+    .dashboard-heading {
+        margin-bottom: 25px;
+    }
+
+        .dashboard-heading h1 {
+            font-size: clamp(1.7rem, 3vw, 2.25rem);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 7px;
+            color: var(--ink);
+        }
+
+        .dashboard-heading p {
+            color: var(--muted);
+            margin-bottom: 0;
+        }
+
+    /* Welcome banner */
+    .welcome-banner {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        padding: 32px;
+        border-radius: 22px;
+        margin-bottom: 28px;
+        color: #ffffff;
+        background: linear-gradient(120deg, #4546c8 0%, #6865ef 55%, #9183ff 100%);
+        box-shadow: 0 14px 32px rgba(85, 83, 218, 0.20);
+    }
+
+        .welcome-banner::before,
+        .welcome-banner::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .welcome-banner::before {
+            width: 230px;
+            height: 230px;
+            right: -55px;
+            top: -100px;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .welcome-banner::after {
+            width: 170px;
+            height: 170px;
+            right: 95px;
+            bottom: -125px;
+            background: rgba(255, 255, 255, 0.10);
+        }
+
+    .welcome-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 700;
+        opacity: 0.85;
+        margin-bottom: 10px;
+    }
+
+    .welcome-banner h2 {
+        font-size: clamp(1.5rem, 3vw, 2.15rem);
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .welcome-banner p {
+        color: rgba(255, 255, 255, 0.88);
+        max-width: 560px;
+        line-height: 1.7;
+        margin-bottom: 22px;
+    }
+
+    .welcome-banner .btn {
+        border-radius: 10px;
+        padding: 11px 18px;
+        font-weight: 700;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .welcome-banner .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 18px rgba(24, 24, 75, 0.16);
+        }
+
+    .welcome-illustration {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 150px;
+    }
+
+    .welcome-icon {
+        width: 125px;
+        height: 125px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4.3rem;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 32px;
+        background: rgba(255, 255, 255, 0.13);
+        transform: rotate(-5deg);
+        box-shadow: 0 15px 30px rgba(30, 30, 100, 0.12);
+    }
+
+    /* Statistics cards */
+    .section-heading {
+        font-size: 1.12rem;
+        font-weight: 800;
+        margin-bottom: 17px;
+        color: var(--ink);
+    }
+
+    .stat-card {
+        height: 100%;
+        min-height: 155px;
+        background: var(--surface);
+        border: 1px solid #eceef7;
+        border-radius: 18px;
+        padding: 21px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(35, 43, 90, 0.035);
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 28px rgba(35, 43, 90, 0.09);
+        }
+
+    .stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 19px;
+    }
+
+    .stat-label {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--muted);
+        margin: 0;
+    }
+
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.35rem;
+        flex-shrink: 0;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -1px;
+        margin: 0 0 10px;
+        color: var(--ink);
+    }
+
+    .stat-note {
+        color: var(--muted);
+        font-size: 0.78rem;
+        margin: 0;
+    }
+
+    .stat-total .stat-icon {
+        background: #eeeeff;
+        color: #5b5ce2;
+    }
+
+    .stat-pending .stat-icon {
+        background: #fff4dc;
+        color: #d99416;
+    }
+
+    .stat-completed .stat-icon {
+        background: #e1f8ed;
+        color: #159b69;
+    }
+
+    .stat-overdue .stat-icon {
+        background: #ffe8ec;
+        color: #e34d67;
+    }
+
+    /* Progress panel */
+    .progress-panel {
+        height: 100%;
+        padding: 23px;
+        background: #ffffff;
+        border: 1px solid #eceef7;
+        border-radius: 18px;
+        box-shadow: 0 5px 20px rgba(35, 43, 90, 0.035);
+    }
+
+        .progress-panel h3 {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 7px;
+        }
+
+    .progress-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin: 14px 0 5px;
+    }
+
+    .dashboard-progress {
+        height: 10px;
+        background: #ededf8;
+        border-radius: 20px;
+        overflow: hidden;
+        margin: 17px 0 12px;
+    }
+
+        .dashboard-progress .progress-bar {
+            border-radius: 20px;
+            background: linear-gradient(90deg, #5556dc, #9183ff);
+            transition: width 0.5s ease;
+        }
+
+    .progress-caption {
+        font-size: 0.8rem;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    /* Recent assignments */
+    .assignments-panel {
+        background: #ffffff;
+        border: 1px solid #eceef7;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 22px rgba(35, 43, 90, 0.045);
+    }
+
+    .assignments-panel-header {
+        padding: 23px 25px;
+        border-bottom: 1px solid #eff0f7;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+        .assignments-panel-header h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin: 0 0 6px;
+        }
+
+        .assignments-panel-header p {
+            color: var(--muted);
+            font-size: 0.83rem;
+            margin: 0;
+        }
+
+    .dashboard-btn {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 15px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .dashboard-btn-primary {
+        color: #ffffff;
+        background: var(--primary);
+    }
+
+        .dashboard-btn-primary:hover {
+            color: #ffffff;
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+    .dashboard-btn-light {
+        color: var(--primary);
+        background: #f0f0ff;
+    }
+
+        .dashboard-btn-light:hover {
+            color: var(--primary-dark);
+            background: #e4e4ff;
+        }
+
+    .dashboard-table {
+        margin: 0;
+        vertical-align: middle;
+        min-width: 650px;
+    }
+
+        .dashboard-table thead th {
+            padding: 15px 22px;
+            background: #f8f8fd;
+            border-bottom: 1px solid #eceef7;
+            color: #777d98;
+            font-size: 0.73rem;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .dashboard-table tbody td {
+            padding: 17px 22px;
+            border-color: #f0f1f7;
+            font-size: 0.88rem;
+        }
+
+        .dashboard-table tbody tr {
+            transition: background 0.18s ease;
+        }
+
+            .dashboard-table tbody tr:hover {
+                background: #fafaff;
+            }
+
+    .assignment-title {
+        font-weight: 700;
+        color: var(--ink);
+    }
+
+    .subject-label {
+        color: #737995;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 11px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+        .status-badge::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+    .status-completed {
+        background: #e3f8ed;
+        color: #138758;
+    }
+
+    .status-pending {
+        background: #fff4dc;
+        color: #ad7410;
+    }
+
+    .status-progress {
+        background: #e8edff;
+        color: #4d64d5;
+    }
+
+    .status-overdue {
+        background: #ffe8ec;
+        color: #d43e59;
+    }
+
+    .status-default {
+        background: #eff0f7;
+        color: #666c85;
+    }
+
+    .view-link {
+        color: var(--primary);
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 0.83rem;
+    }
+
+        .view-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 45px 20px;
+    }
+
+    .empty-state-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 20px;
+        margin: 0 auto 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eeeeff;
+        color: var(--primary);
+        font-size: 1.8rem;
+    }
+
+    .empty-state h4 {
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: var(--muted);
+        font-size: 0.87rem;
+        margin-bottom: 18px;
+    }
+
+    .assignments-panel-footer {
+        padding: 17px 25px;
+        border-top: 1px solid #eff0f7;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .footer-note {
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin: 0;
+    }
+
+    @@media (max-width: 767px) {
+        .dashboard-page {
+            padding-top: 5px;
+        }
+
+        .welcome-banner {
+            padding: 24px 21px;
+            border-radius: 18px;
+        }
+
+        .welcome-illustration {
+            min-height: 105px;
+            justify-content: flex-start;
+        }
+
+        .welcome-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 22px;
+            font-size: 2.8rem;
+        }
+
+        .assignments-panel-header {
+            padding: 20px;
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .assignments-panel-footer {
+            padding: 16px 20px;
+        }
+
+        .stat-card {
+            padding: 17px;
+            min-height: 145px;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .stat-card,
+        .dashboard-btn,
+        .dashboard-table tbody tr {
+            transition: none;
+        }
+    }
+</style>
+
+<div class="container dashboard-page">
+
+    <!-- Page heading -->
+    <div class="dashboard-heading">
+        <h1>Student Dashboard</h1>
+        <p>Manage your academic tasks, assignments and deadlines in one place.</p>
+    </div>
+
+    <!-- Welcome banner -->
+    <section class="welcome-banner">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="welcome-label">YOUR PERSONAL WORKSPACE</div>
+
+                <h2>Welcome back, @studentName! 👋</h2>
+
+                <p>
+                    Stay organized, keep track of your deadlines and make
+                    progress towards your academic goals. Every task completed
+                    is a step forward!
+                </p>
+
+                <a asp-controller="Assignments"
+                   asp-action="Create"
+                   class="btn btn-light">
+                    <span aria-hidden="true">＋</span> Create New Assignment
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <div class="welcome-illustration">
+                    <div class="welcome-icon" aria-hidden="true">📚</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-heading mb-0">Your Overview</h2>
+        <span class="text-muted small">Assignment statistics</span>
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-total">
+                <div class="stat-top">
+                    <p class="stat-label">Total Assignments</p>
+                    <div class="stat-icon" aria-hidden="true">📋</div>
+                </div>
+                <h3 class="stat-number">@total</h3>
+                <p class="stat-note">All your assignments</p>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-pending">
+                <div class="stat-top">
+                    <p class="stat-label">Pending</p>
+                    <div class="stat-icon" aria-hidden="true">⏳</div>
+                </div>
+                <h3 class="stat-number">@pending</h3>
+                <p class="stat-note">Awaiting completion</p>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-completed">
+                <div class="stat-top">
+                    <p class="stat-label">Completed</p>
+                    <div class="stat-icon" aria-hidden="true">✓</div>
+                </div>
+                <h3 class="stat-number">@completed</h3>
+                <p class="stat-note">Successfully finished</p>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="stat-card stat-overdue">
+                <div class="stat-top">
+                    <p class="stat-label">Overdue</p>
+                    <div class="stat-icon" aria-hidden="true">⚠</div>
+                </div>
+                <h3 class="stat-number">@overdue</h3>
+                <p class="stat-note">Past due and unfinished</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Completion progress -->
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <div class="progress-panel">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                        <h3>Assignment Progress</h3>
+                        <p class="text-muted small mb-0">
+                            Your completed assignments at a glance
+                        </p>
+                    </div>
+
+                    <span class="badge rounded-pill text-bg-light">
+                        @completed of @total completed
+                    </span>
+                </div>
+
+                <div class="progress-number">@completionRate%</div>
+
+                <div class="progress dashboard-progress"
+                     role="progressbar"
+                     aria-label="Assignment completion rate"
+                     aria-valuenow="@completionRate"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                    <div class="progress-bar"
+                         style="width: @completionRate.ToString(System.Globalization.CultureInfo.InvariantCulture)%">
+                    </div>
+                </div>
+
+                <p class="progress-caption mb-0">
+                    @if (total == 0)
+                    {
+                        <span>Add your first assignment to start tracking your progress.</span>
+                    }
+                    else if (completionRate == 100)
+                    {
+                        <span>Excellent work! You have completed all your assignments.</span>
+                    }
+                    else
+                    {
+                        <span>Keep going! Complete your pending tasks to reach your academic goals.</span>
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent assignments -->
+    <section class="assignments-panel">
+
+        <div class="assignments-panel-header">
+            <div>
+                <h3>Recent Assignments</h3>
+                <p>Your latest assignments and their current status.</p>
+            </div>
+
+            <a asp-controller="Assignments"
+               asp-action="Create"
+               class="dashboard-btn dashboard-btn-primary">
+                <span aria-hidden="true">＋</span> Add Assignment
+            </a>
+        </div>
+
+        @if (recentAssignments.Count == 0)
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon" aria-hidden="true">📝</div>
+                <h4>No assignments yet</h4>
+                <p>Your assignments will appear here after you create them.</p>
+
+                <a asp-controller="Assignments"
+                   asp-action="Create"
+                   class="dashboard-btn dashboard-btn-primary">
+                    Create Your First Assignment
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Assignment</th>
+                            <th>Subject</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in recentAssignments)
+                        {
+                            var isOverdue = item.Status != "Completed"
+                                && item.DueDate.Date < DateTime.Today;
+
+                            var badgeClass = item.Status switch
+                            {
+                                "Completed" => "status-completed",
+                                "In Progress" => "status-progress",
+                                "Pending" when isOverdue => "status-overdue",
+                                "Pending" => "status-pending",
+                                _ => "status-default"
+                            };
+
+                            var displayStatus = isOverdue
+                                ? "Overdue"
+                                : item.Status;
+
+                            <tr>
+                                <td>
+                                    <span class="assignment-title">
+                                        @item.Title
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="subject-label">
+                                        @item.Subject
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @item.DueDate.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+                                    <span class="status-badge @badgeClass">
+                                        @displayStatus
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <a asp-controller="Assignments"
+                                       asp-action="Details"
+                                       asp-route-id="@item.Id"
+                                       class="view-link">
+                                        View Details →
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div class="assignments-panel-footer">
+            <p class="footer-note">
+                Showing your latest @recentAssignments.Count assignment(s).
+            </p>
+
+            <a asp-controller="Assignments"
+               asp-action="Index"
+               class="dashboard-btn dashboard-btn-light">
+                View All Assignments →
+            </a>
+        </div>
+
+    </section>
+
+</div>

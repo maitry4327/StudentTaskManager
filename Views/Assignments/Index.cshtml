@@ -1,0 +1,847 @@
+﻿@model IEnumerable<StudentTaskManager.Models.Assignment>
+
+@{
+    ViewData["Title"] = "My Assignments";
+
+    var assignments = Model.ToList();
+    int totalCount = assignments.Count;
+    int completedCount = assignments.Count(a => a.Status == "Completed");
+    int pendingCount = assignments.Count(a => a.Status == "Pending");
+    int inProgressCount = assignments.Count(a => a.Status == "In Progress");
+}
+
+<style>
+    .assignment-page {
+        --ap-primary: #5b5ce2;
+        --ap-primary-dark: #4445c7;
+        --ap-ink: #202544;
+        --ap-muted: #7c829e;
+        padding: 14px 0 35px;
+        color: var(--ap-ink);
+    }
+
+        .assignment-page * {
+            box-sizing: border-box;
+        }
+
+    .assignment-heading {
+        margin-bottom: 25px;
+    }
+
+        .assignment-heading h1 {
+            font-size: clamp(1.8rem, 3vw, 2.3rem);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .assignment-heading p {
+            color: var(--ap-muted);
+            margin-bottom: 0;
+        }
+
+    .assignment-primary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 18px;
+        background: var(--ap-primary);
+        color: white;
+        border: none;
+        border-radius: 11px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+        .assignment-primary-btn:hover {
+            background: var(--ap-primary-dark);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 17px rgba(91, 92, 226, 0.2);
+        }
+
+    /* Summary cards */
+    .assignment-summary-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        height: 100%;
+        min-height: 108px;
+        padding: 19px;
+        border: 1px solid #eceef7;
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow: 0 5px 20px rgba(35, 43, 90, 0.035);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .assignment-summary-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px rgba(35, 43, 90, 0.08);
+        }
+
+    .assignment-summary-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        font-size: 1.45rem;
+        flex-shrink: 0;
+    }
+
+    .summary-purple .assignment-summary-icon {
+        background: #eeeeff;
+        color: #5b5ce2;
+    }
+
+    .summary-yellow .assignment-summary-icon {
+        background: #fff4dc;
+        color: #bd8215;
+    }
+
+    .summary-blue .assignment-summary-icon {
+        background: #e8edff;
+        color: #4d64d5;
+    }
+
+    .summary-green .assignment-summary-icon {
+        background: #e1f8ed;
+        color: #159b69;
+    }
+
+    .assignment-summary-label {
+        color: var(--ap-muted);
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .assignment-summary-number {
+        color: var(--ap-ink);
+        font-size: 1.65rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin: 0;
+    }
+
+    /* Search panel */
+    .assignment-filter-panel {
+        background: #ffffff;
+        border: 1px solid #eceef7;
+        border-radius: 18px;
+        padding: 23px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(35, 43, 90, 0.035);
+    }
+
+    .filter-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 19px;
+    }
+
+    .filter-heading-icon {
+        width: 43px;
+        height: 43px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eeeeff;
+        color: var(--ap-primary);
+        border-radius: 13px;
+        font-size: 1.25rem;
+    }
+
+    .filter-heading h2 {
+        font-size: 1rem;
+        font-weight: 800;
+        margin: 0 0 4px;
+    }
+
+    .filter-heading p {
+        color: var(--ap-muted);
+        font-size: 0.8rem;
+        margin: 0;
+    }
+
+    .assignment-filter-panel .form-label {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #454b69;
+        margin-bottom: 8px;
+    }
+
+    .assignment-filter-panel .form-control,
+    .assignment-filter-panel .form-select {
+        min-height: 45px;
+        border-radius: 10px;
+        border: 1px solid #e3e5f0;
+        font-size: 0.88rem;
+        box-shadow: none;
+    }
+
+        .assignment-filter-panel .form-control:focus,
+        .assignment-filter-panel .form-select:focus {
+            border-color: #8585ef;
+            box-shadow: 0 0 0 3px rgba(91, 92, 226, 0.10);
+        }
+
+    .filter-search-btn,
+    .filter-reset-btn {
+        min-height: 45px;
+        border-radius: 10px;
+        padding: 10px 15px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .filter-search-btn {
+        color: white;
+        background: var(--ap-primary);
+        border: 1px solid var(--ap-primary);
+    }
+
+        .filter-search-btn:hover {
+            background: var(--ap-primary-dark);
+            color: white;
+        }
+
+    .filter-reset-btn {
+        color: #5e6480;
+        background: #ffffff;
+        border: 1px solid #e3e5f0;
+    }
+
+        .filter-reset-btn:hover {
+            color: var(--ap-primary);
+            background: #f5f5ff;
+            border-color: #d6d6ff;
+        }
+
+    /* Table panel */
+    .assignment-table-panel {
+        background: #ffffff;
+        border: 1px solid #eceef7;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 5px 22px rgba(35, 43, 90, 0.045);
+    }
+
+    .assignment-table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 23px 25px;
+        border-bottom: 1px solid #eff0f7;
+    }
+
+        .assignment-table-header h2 {
+            font-size: 1.12rem;
+            font-weight: 800;
+            margin: 0 0 6px;
+        }
+
+        .assignment-table-header p {
+            font-size: 0.82rem;
+            color: var(--ap-muted);
+            margin: 0;
+        }
+
+    .assignment-count-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #eeeeff;
+        color: var(--ap-primary);
+        border-radius: 30px;
+        padding: 8px 12px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .assignment-table {
+        min-width: 850px;
+        margin: 0;
+        vertical-align: middle;
+    }
+
+        .assignment-table thead th {
+            padding: 15px 20px;
+            background: #f8f8fd;
+            border-bottom: 1px solid #eceef7;
+            color: #777d98;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            white-space: nowrap;
+        }
+
+        .assignment-table tbody td {
+            padding: 18px 20px;
+            border-color: #f0f1f7;
+            font-size: 0.86rem;
+        }
+
+        .assignment-table tbody tr {
+            transition: background 0.18s ease;
+        }
+
+            .assignment-table tbody tr:hover {
+                background: #fafaff;
+            }
+
+    .assignment-title {
+        display: block;
+        font-weight: 750;
+        color: var(--ap-ink);
+        margin-bottom: 4px;
+    }
+
+    .assignment-id {
+        color: #9095ac;
+        font-size: 0.74rem;
+    }
+
+    .assignment-subject {
+        color: #737995;
+    }
+
+    .assignment-date {
+        color: #555b78;
+        white-space: nowrap;
+    }
+
+    .assignment-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 11px;
+        border-radius: 30px;
+        font-size: 0.74rem;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+        .assignment-status::before {
+            content: "";
+            height: 6px;
+            width: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+    .badge-completed {
+        background: #e1f8ed;
+        color: #138758;
+    }
+
+    .badge-pending {
+        background: #fff4dc;
+        color: #ad7410;
+    }
+
+    .badge-progress {
+        background: #e8edff;
+        color: #4d64d5;
+    }
+
+    .badge-overdue {
+        background: #ffe8ec;
+        color: #d43e59;
+    }
+
+    .badge-default {
+        background: #eff0f7;
+        color: #666c85;
+    }
+
+    .assignment-actions {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .assignment-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 33px;
+        padding: 7px 10px;
+        border-radius: 8px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-decoration: none;
+        border: 1px solid transparent;
+        transition: all 0.18s ease;
+    }
+
+    .action-view {
+        color: #4d64d5;
+        background: #e8edff;
+    }
+
+        .action-view:hover {
+            color: #ffffff;
+            background: #4d64d5;
+        }
+
+    .action-edit {
+        color: #ad7410;
+        background: #fff4dc;
+    }
+
+        .action-edit:hover {
+            color: #ffffff;
+            background: #bd8215;
+        }
+
+    .action-delete {
+        color: #d43e59;
+        background: #ffe8ec;
+    }
+
+        .action-delete:hover {
+            color: #ffffff;
+            background: #d43e59;
+        }
+
+    .assignment-empty-state {
+        text-align: center;
+        padding: 50px 20px;
+    }
+
+    .assignment-empty-icon {
+        width: 68px;
+        height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 21px;
+        margin: 0 auto 16px;
+        background: #eeeeff;
+        color: var(--ap-primary);
+        font-size: 1.9rem;
+    }
+
+    .assignment-empty-state h3 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .assignment-empty-state p {
+        font-size: 0.86rem;
+        color: var(--ap-muted);
+        margin-bottom: 20px;
+    }
+
+    .assignment-table-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 17px 25px;
+        border-top: 1px solid #eff0f7;
+        flex-wrap: wrap;
+    }
+
+    .assignment-footer-note {
+        font-size: 0.78rem;
+        color: var(--ap-muted);
+        margin: 0;
+    }
+
+    .assignment-message {
+        border: 0;
+        border-radius: 12px;
+        padding: 15px 18px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .assignment-message-success {
+        color: #14764e;
+        background: #e1f8ed;
+    }
+
+    .assignment-message-info {
+        color: #3158a4;
+        background: #e8f1ff;
+    }
+
+    @@media (max-width: 767px) {
+        .assignment-page {
+            padding-top: 5px;
+        }
+
+        .assignment-heading {
+            align-items: flex-start !important;
+        }
+
+            .assignment-heading h1 {
+                font-size: 1.75rem;
+            }
+
+            .assignment-heading .assignment-primary-btn {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+
+        .assignment-filter-panel {
+            padding: 19px;
+        }
+
+        .assignment-table-header {
+            padding: 20px;
+        }
+
+        .assignment-table-footer {
+            padding: 16px 20px;
+        }
+    }
+
+    @@media (max-width: 420px) {
+        .assignment-heading {
+            flex-direction: column;
+            gap: 14px;
+        }
+
+            .assignment-heading .assignment-primary-btn {
+                width: 100%;
+            }
+
+        .assignment-summary-card {
+            padding: 13px;
+            gap: 10px;
+        }
+
+        .assignment-summary-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            font-size: 1.1rem;
+        }
+
+        .assignment-summary-number {
+            font-size: 1.4rem;
+        }
+
+        .assignment-summary-label {
+            font-size: 0.73rem;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .assignment-summary-card,
+        .assignment-primary-btn,
+        .assignment-action-btn {
+            transition: none;
+        }
+    }
+</style>
+
+<div class="container assignment-page">
+
+    <!-- Page heading -->
+    <div class="assignment-heading d-flex justify-content-between align-items-center gap-3">
+        <div>
+            <h1>My Assignments 📚</h1>
+            <p>Organize your academic work and stay ahead of deadlines.</p>
+        </div>
+
+        <a asp-action="Create" class="assignment-primary-btn">
+            <span aria-hidden="true">＋</span>
+            Add Assignment
+        </a>
+    </div>
+
+    <!-- Summary cards: based on the currently displayed result set -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-6 col-lg-3">
+            <div class="assignment-summary-card summary-purple">
+                <div class="assignment-summary-icon" aria-hidden="true">📋</div>
+                <div>
+                    <p class="assignment-summary-label">Matching Results</p>
+                    <h2 class="assignment-summary-number">@totalCount</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="assignment-summary-card summary-yellow">
+                <div class="assignment-summary-icon" aria-hidden="true">⏳</div>
+                <div>
+                    <p class="assignment-summary-label">Pending</p>
+                    <h2 class="assignment-summary-number">@pendingCount</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="assignment-summary-card summary-blue">
+                <div class="assignment-summary-icon" aria-hidden="true">🔄</div>
+                <div>
+                    <p class="assignment-summary-label">In Progress</p>
+                    <h2 class="assignment-summary-number">@inProgressCount</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="assignment-summary-card summary-green">
+                <div class="assignment-summary-icon" aria-hidden="true">✓</div>
+                <div>
+                    <p class="assignment-summary-label">Completed</p>
+                    <h2 class="assignment-summary-number">@completedCount</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Search and filter -->
+    <section class="assignment-filter-panel">
+
+        <div class="filter-heading">
+            <div class="filter-heading-icon" aria-hidden="true">⌕</div>
+            <div>
+                <h2>Search & Filter Assignments</h2>
+                <p>Find assignments by title, subject or status.</p>
+            </div>
+        </div>
+
+        <form asp-controller="Assignments"
+              asp-action="Index"
+              method="get">
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-12 col-md-6">
+                    <label for="searchString" class="form-label">
+                        Search by Title or Subject
+                    </label>
+
+                    <input type="text"
+                           id="searchString"
+                           name="searchString"
+                           value="@ViewBag.SearchString"
+                           class="form-control"
+                           placeholder="e.g. DCN Assignment" />
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label for="statusFilter" class="form-label">
+                        Assignment Status
+                    </label>
+
+                    <select id="statusFilter"
+                            name="statusFilter"
+                            class="form-select">
+
+                        <option value="All"
+                                selected="@(ViewBag.StatusFilter == "All")">
+                            All Statuses
+                        </option>
+
+                        <option value="Pending"
+                                selected="@(ViewBag.StatusFilter == "Pending")">
+                            Pending
+                        </option>
+
+                        <option value="In Progress"
+                                selected="@(ViewBag.StatusFilter == "In Progress")">
+                            In Progress
+                        </option>
+
+                        <option value="Completed"
+                                selected="@(ViewBag.StatusFilter == "Completed")">
+                            Completed
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="filter-search-btn flex-grow-1">
+                            Search
+                        </button>
+
+                        <a asp-controller="Assignments"
+                           asp-action="Index"
+                           class="filter-reset-btn">
+                            Reset
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+    </section>
+
+    <!-- Success message -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="assignment-message assignment-message-success" role="status">
+            ✓ @TempData["Success"]
+        </div>
+    }
+
+    <!-- Assignment table -->
+    <section class="assignment-table-panel">
+
+        <div class="assignment-table-header">
+            <div>
+                <h2>Assignment List</h2>
+                <p>Review and manage your assignments from one place.</p>
+            </div>
+
+            <span class="assignment-count-badge">
+                @totalCount result(s)
+            </span>
+        </div>
+
+        @if (!assignments.Any())
+        {
+            <div class="assignment-empty-state">
+                <div class="assignment-empty-icon" aria-hidden="true">📝</div>
+
+                <h3>No assignments found</h3>
+
+                <p>
+                    Try changing your search or status filter,
+                    or create a new assignment.
+                </p>
+
+                <a asp-action="Create" class="assignment-primary-btn">
+                    ＋ Create Assignment
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table assignment-table">
+
+                    <thead>
+                        <tr>
+                            <th>Assignment</th>
+                            <th>Subject</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in assignments)
+                        {
+                            var isOverdue = item.Status != "Completed"
+                                && item.DueDate.Date < DateTime.Today;
+
+                            var badgeClass = item.Status switch
+                            {
+                                "Completed" => "badge-completed",
+                                "In Progress" => "badge-progress",
+                                "Pending" when isOverdue => "badge-overdue",
+                                "Pending" => "badge-pending",
+                                _ => "badge-default"
+                            };
+
+                            var displayStatus = isOverdue
+                                ? "Overdue"
+                                : item.Status;
+
+                            <tr>
+                                <td>
+                                    <span class="assignment-title">
+                                        @item.Title
+                                    </span>
+                                    <span class="assignment-id">
+                                        Assignment #@item.Id
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="assignment-subject">
+                                        @item.Subject
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="assignment-date">
+                                        @item.DueDate.ToString("dd MMM yyyy")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="assignment-status @badgeClass">
+                                        @displayStatus
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="assignment-actions">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.Id"
+                                           class="assignment-action-btn action-view">
+                                            View
+                                        </a>
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.Id"
+                                           class="assignment-action-btn action-edit">
+                                            Edit
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.Id"
+                                           class="assignment-action-btn action-delete">
+                                            Delete
+                                        </a>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        }
+
+        <div class="assignment-table-footer">
+            <p class="assignment-footer-note">
+                Showing @totalCount assignment(s) matching your current filters.
+            </p>
+
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="filter-reset-btn">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+    </section>
+
+</div>

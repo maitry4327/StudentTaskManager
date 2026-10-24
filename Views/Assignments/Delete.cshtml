@@ -1,0 +1,377 @@
+﻿@model StudentTaskManager.Models.Assignment
+
+@{
+    ViewData["Title"] = "Delete Assignment";
+
+    var statusClass = Model.Status switch
+    {
+        "Completed" => "status-completed",
+        "In Progress" => "status-progress",
+        _ => "status-pending"
+    };
+}
+
+<style>
+    .delete-page {
+        max-width: 850px;
+        margin: 40px auto 55px;
+        padding: 0 15px;
+    }
+
+    .delete-card {
+        background: #fff;
+        border: 1px solid #e8eaf2;
+        border-radius: 20px;
+        box-shadow: 0 12px 35px rgba(35, 35, 75, 0.09);
+        overflow: hidden;
+    }
+
+    .delete-header {
+        background: linear-gradient(135deg, #4338ca, #7c3aed);
+        color: white;
+        padding: 28px 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .delete-header::after {
+            content: "";
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            right: -40px;
+            top: -70px;
+            border: 28px solid rgba(255, 255, 255, 0.10);
+            border-radius: 50%;
+        }
+
+    .delete-icon {
+        display: inline-flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 14px;
+        font-size: 25px;
+        margin-bottom: 14px;
+    }
+
+    .delete-header h2 {
+        font-size: 26px;
+        font-weight: 750;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .delete-header p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.85);
+        position: relative;
+        z-index: 1;
+    }
+
+    .delete-body {
+        padding: 30px;
+    }
+
+    .warning-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: 13px;
+        margin-bottom: 26px;
+    }
+
+    .warning-symbol {
+        font-size: 24px;
+        line-height: 1.2;
+    }
+
+    .warning-title {
+        color: #9a3412;
+        font-size: 15px;
+        font-weight: 750;
+        margin-bottom: 5px;
+    }
+
+    .warning-text {
+        color: #9a3412;
+        font-size: 13px;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .assignment-title {
+        font-size: 23px;
+        font-weight: 750;
+        color: #252b48;
+        margin-bottom: 7px;
+        overflow-wrap: anywhere;
+    }
+
+    .assignment-subtitle {
+        font-size: 14px;
+        color: #7b8196;
+        margin-bottom: 23px;
+    }
+
+    .info-panel {
+        background: #f8f9ff;
+        border: 1px solid #edf0fa;
+        border-radius: 14px;
+        padding: 22px;
+    }
+
+    .info-item {
+        padding: 13px 0;
+        border-bottom: 1px solid #e8eaf3;
+    }
+
+        .info-item:first-child {
+            padding-top: 0;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+    .info-label {
+        color: #7b8196;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+    }
+
+    .info-value {
+        color: #252b48;
+        font-size: 14px;
+        font-weight: 550;
+        overflow-wrap: anywhere;
+    }
+
+    .description-box {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        line-height: 1.7;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-completed {
+        color: #047857;
+        background: #d1fae5;
+    }
+
+    .status-progress {
+        color: #1d4ed8;
+        background: #dbeafe;
+    }
+
+    .status-pending {
+        color: #92400e;
+        background: #fef3c7;
+    }
+
+    .delete-divider {
+        border: 0;
+        border-top: 1px solid #edf0f6;
+        margin: 26px 0;
+    }
+
+    .delete-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .btn-confirm-delete {
+        border: none;
+        border-radius: 11px;
+        padding: 12px 21px;
+        color: #fff;
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        font-weight: 650;
+        box-shadow: 0 5px 14px rgba(220, 38, 38, 0.18);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .btn-confirm-delete:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(220, 38, 38, 0.25);
+        }
+
+    .btn-cancel-delete {
+        border: 1px solid #dfe3ee;
+        border-radius: 11px;
+        padding: 12px 22px;
+        color: #4b5563;
+        background: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .btn-cancel-delete:hover {
+            background: #f8f9fc;
+            color: #252b48;
+        }
+
+    @@media (max-width: 576px) {
+        .delete-page {
+            margin-top: 20px;
+            padding: 0 10px;
+        }
+
+        .delete-header {
+            padding: 24px 20px;
+        }
+
+            .delete-header h2 {
+                font-size: 23px;
+            }
+
+        .delete-body {
+            padding: 22px 18px;
+        }
+
+        .assignment-title {
+            font-size: 20px;
+        }
+
+        .info-panel {
+            padding: 17px;
+        }
+
+        .delete-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="delete-page">
+
+    <div class="delete-card">
+
+        <!-- Header -->
+        <div class="delete-header">
+
+            <div class="delete-icon">🗑️</div>
+
+            <h2>Delete Assignment</h2>
+
+            <p>Review the assignment details before confirming deletion.</p>
+
+        </div>
+
+        <!-- Content -->
+        <div class="delete-body">
+
+            <!-- Warning -->
+            <div class="warning-box">
+
+                <div class="warning-symbol">⚠️</div>
+
+                <div>
+                    <div class="warning-title">Are you sure?</div>
+
+                    <p class="warning-text">
+                        You are about to delete this assignment.
+                        This action cannot be undone.
+                        Please review the details below before continuing.
+                    </p>
+                </div>
+
+            </div>
+
+            <h3 class="assignment-title">@Model.Title</h3>
+
+            <p class="assignment-subtitle">
+                Assignment ID: #@Model.Id
+            </p>
+
+            <!-- Assignment Information -->
+            <div class="info-panel">
+
+                <div class="info-item">
+                    <div class="info-label">Subject</div>
+                    <div class="info-value">@Model.Subject</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Description</div>
+
+                    <div class="info-value description-box">
+                        @(string.IsNullOrWhiteSpace(Model.Description)
+                        ? "No description provided."
+                        : Model.Description)
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Due Date</div>
+
+                    <div class="info-value">
+                        📅 @Model.DueDate.ToString("dd MMM yyyy")
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Current Status</div>
+
+                    <div>
+                        <span class="status-badge @statusClass">
+                            @Model.Status
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <hr class="delete-divider" />
+
+            <!-- Confirmation Form -->
+            <form asp-controller="Assignments"
+                  asp-action="Delete"
+                  asp-route-id="@Model.Id"
+                  method="post">
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="delete-actions">
+
+                    <button type="submit" class="btn btn-confirm-delete">
+                        🗑️ &nbsp; Yes, Delete Assignment
+                    </button>
+
+                    <a asp-controller="Assignments"
+                       asp-action="Index"
+                       class="btn btn-cancel-delete">
+                        ← &nbsp; Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

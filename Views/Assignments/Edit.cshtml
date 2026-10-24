@@ -1,0 +1,365 @@
+﻿@model StudentTaskManager.Models.Assignment
+
+@{
+    ViewData["Title"] = "Edit Assignment";
+}
+
+<style>
+    .edit-page {
+        max-width: 950px;
+        margin: 35px auto 55px;
+        padding: 0 15px;
+    }
+
+    .edit-card {
+        background: #fff;
+        border: 1px solid #e8eaf2;
+        border-radius: 20px;
+        box-shadow: 0 12px 35px rgba(35, 35, 75, 0.09);
+        overflow: hidden;
+    }
+
+    .edit-header {
+        background: linear-gradient(135deg, #4338ca, #7c3aed);
+        color: white;
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .edit-header::after {
+            content: "";
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            right: -45px;
+            top: -75px;
+            border: 30px solid rgba(255, 255, 255, 0.10);
+            border-radius: 50%;
+        }
+
+    .edit-icon {
+        display: inline-flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 14px;
+        font-size: 25px;
+        margin-bottom: 15px;
+    }
+
+    .edit-header h2 {
+        font-size: 27px;
+        font-weight: 750;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .edit-header p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.85);
+        position: relative;
+        z-index: 1;
+    }
+
+    .edit-form {
+        padding: 32px;
+    }
+
+    .section-title {
+        color: #252b48;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .section-description {
+        color: #7b8196;
+        font-size: 13px;
+        margin-bottom: 25px;
+    }
+
+    .edit-form .form-label {
+        font-size: 14px;
+        font-weight: 650;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    .edit-form .form-control,
+    .edit-form .form-select {
+        border: 1px solid #dfe3ee;
+        border-radius: 11px;
+        padding: 12px 14px;
+        color: #252b48;
+        font-size: 14px;
+        background-color: #fff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .edit-form .form-control:focus,
+        .edit-form .form-select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+        }
+
+    .edit-form textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .edit-form .text-danger {
+        display: block;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .required-mark {
+        color: #e11d48;
+    }
+
+    .form-divider {
+        border: 0;
+        border-top: 1px solid #edf0f6;
+        margin: 28px 0;
+    }
+
+    .edit-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+    }
+
+    .btn-update {
+        border: none;
+        border-radius: 11px;
+        padding: 12px 23px;
+        color: #fff;
+        font-weight: 650;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        box-shadow: 0 5px 14px rgba(79, 70, 229, 0.22);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .btn-update:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(79, 70, 229, 0.30);
+        }
+
+    .btn-cancel {
+        border: 1px solid #dfe3ee;
+        border-radius: 11px;
+        padding: 12px 22px;
+        color: #4b5563;
+        background: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .btn-cancel:hover {
+            background: #f8f9fc;
+            color: #252b48;
+        }
+
+    .assignment-id {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.17);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
+    }
+
+    @@media (max-width: 576px) {
+        .edit-page {
+            margin-top: 20px;
+            padding: 0 10px;
+        }
+
+        .edit-header {
+            padding: 24px 20px;
+        }
+
+            .edit-header h2 {
+                font-size: 23px;
+            }
+
+        .edit-form {
+            padding: 22px 18px;
+        }
+
+        .edit-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="edit-page">
+
+    <div class="edit-card">
+
+        <!-- Page Header -->
+        <div class="edit-header">
+
+            <div class="edit-icon">✏️</div>
+
+            <div class="assignment-id">
+                Assignment ID: #@Model.Id
+            </div>
+
+            <h2>Edit Assignment</h2>
+
+            <p>Update your assignment details and manage your deadlines.</p>
+
+        </div>
+
+        <!-- Edit Form -->
+        <div class="edit-form">
+
+            <div class="section-title">Assignment Information</div>
+
+            <p class="section-description">
+                Make the necessary changes and save your updated assignment.
+                Fields marked with <span class="required-mark">*</span> are required.
+            </p>
+
+            <form asp-controller="Assignments"
+                  asp-action="Edit"
+                  asp-route-id="@Model.Id"
+                  method="post">
+
+                <input type="hidden" asp-for="Id" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger"
+                     role="alert">
+                </div>
+
+                <div class="row g-4">
+
+                    <!-- Title -->
+                    <div class="col-md-6">
+
+                        <label asp-for="Title" class="form-label">
+                            Assignment Title <span class="required-mark">*</span>
+                        </label>
+
+                        <input asp-for="Title"
+                               class="form-control"
+                               placeholder="Enter assignment title"
+                               autocomplete="off" />
+
+                        <span asp-validation-for="Title"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <!-- Subject -->
+                    <div class="col-md-6">
+
+                        <label asp-for="Subject" class="form-label">
+                            Subject <span class="required-mark">*</span>
+                        </label>
+
+                        <input asp-for="Subject"
+                               class="form-control"
+                               placeholder="Enter subject name" />
+
+                        <span asp-validation-for="Subject"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-12">
+
+                        <label asp-for="Description" class="form-label">
+                            Description
+                        </label>
+
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Enter assignment description..."></textarea>
+
+                        <span asp-validation-for="Description"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <!-- Due Date -->
+                    <div class="col-md-6">
+
+                        <label asp-for="DueDate" class="form-label">
+                            Due Date <span class="required-mark">*</span>
+                        </label>
+
+                        <input asp-for="DueDate"
+                               type="date"
+                               class="form-control" />
+
+                        <span asp-validation-for="DueDate"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+
+                        <label asp-for="Status" class="form-label">
+                            Assignment Status
+                        </label>
+
+                        <select asp-for="Status" class="form-select">
+                            <option value="Pending">⏳ Pending</option>
+                            <option value="In Progress">🔄 In Progress</option>
+                            <option value="Completed">✅ Completed</option>
+                        </select>
+
+                        <span asp-validation-for="Status"
+                              class="text-danger"></span>
+
+                    </div>
+
+                </div>
+
+                <hr class="form-divider" />
+
+                <!-- Buttons -->
+                <div class="edit-actions">
+
+                    <button type="submit" class="btn btn-update">
+                        ✓ &nbsp; Update Assignment
+                    </button>
+
+                    <a asp-controller="Assignments"
+                       asp-action="Index"
+                       class="btn btn-cancel">
+                        ← &nbsp; Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

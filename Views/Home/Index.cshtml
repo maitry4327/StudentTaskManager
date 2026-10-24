@@ -1,0 +1,631 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<style>
+    .home-page {
+        color: #252b48;
+        overflow: hidden;
+    }
+
+    .hero-section {
+        position: relative;
+        padding: 75px 35px;
+        border-radius: 25px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #312e81 0%, #4f46e5 52%, #8b5cf6 100%);
+        color: white;
+        margin-top: 25px;
+    }
+
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            right: -100px;
+            top: -130px;
+            border: 45px solid rgba(255,255,255,.09);
+            border-radius: 50%;
+        }
+
+        .hero-section::after {
+            content: "";
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            right: 160px;
+            bottom: -130px;
+            background: rgba(255,255,255,.07);
+            border-radius: 50%;
+        }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-tag {
+        display: inline-block;
+        background: rgba(255,255,255,.15);
+        border: 1px solid rgba(255,255,255,.2);
+        padding: 8px 15px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 22px;
+    }
+
+    .hero-title {
+        font-size: clamp(32px, 5vw, 49px);
+        font-weight: 800;
+        line-height: 1.2;
+        letter-spacing: -1px;
+        margin-bottom: 20px;
+    }
+
+        .hero-title span {
+            color: #ddd6fe;
+        }
+
+    .hero-description {
+        max-width: 540px;
+        color: rgba(255,255,255,.85);
+        font-size: 16px;
+        line-height: 1.9;
+        margin-bottom: 30px;
+    }
+
+    .hero-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 13px;
+    }
+
+    .hero-btn-primary {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        background: white;
+        color: #4338ca;
+        border-radius: 12px;
+        padding: 13px 23px;
+        font-weight: 750;
+        text-decoration: none;
+        transition: .2s;
+    }
+
+        .hero-btn-primary:hover {
+            color: #312e81;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(0,0,0,.15);
+        }
+
+    .hero-btn-secondary {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        border: 1px solid rgba(255,255,255,.4);
+        border-radius: 12px;
+        padding: 13px 23px;
+        font-weight: 650;
+        text-decoration: none;
+        transition: .2s;
+    }
+
+        .hero-btn-secondary:hover {
+            background: rgba(255,255,255,.12);
+            color: white;
+        }
+
+    .hero-visual {
+        position: relative;
+        z-index: 2;
+        max-width: 360px;
+        margin: 25px auto;
+    }
+
+    .visual-main-card {
+        background: rgba(255,255,255,.97);
+        color: #252b48;
+        border-radius: 23px;
+        padding: 25px;
+        box-shadow: 0 22px 55px rgba(20,10,70,.22);
+        transform: rotate(2deg);
+    }
+
+    .visual-heading {
+        font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 5px;
+    }
+
+    .visual-subheading {
+        color: #858ba0;
+        font-size: 12px;
+        margin-bottom: 22px;
+    }
+
+    .visual-task {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #f8f9ff;
+        padding: 13px;
+        border-radius: 13px;
+        margin-bottom: 11px;
+    }
+
+    .visual-task-icon {
+        display: flex;
+        width: 39px;
+        height: 39px;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        background: #ede9fe;
+        border-radius: 11px;
+        font-size: 19px;
+    }
+
+    .visual-task-title {
+        font-size: 13px;
+        font-weight: 750;
+        margin-bottom: 4px;
+    }
+
+    .visual-task-date {
+        font-size: 11px;
+        color: #858ba0;
+    }
+
+    .visual-status {
+        margin-left: auto;
+        font-size: 10px;
+        font-weight: 750;
+        color: #047857;
+        background: #d1fae5;
+        border-radius: 20px;
+        padding: 5px 8px;
+    }
+
+    .section-block {
+        padding: 65px 0 15px;
+    }
+
+    .section-eyebrow {
+        color: #6366f1;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .section-heading {
+        font-size: clamp(25px, 4vw, 34px);
+        font-weight: 800;
+        color: #252b48;
+        margin-bottom: 13px;
+    }
+
+    .section-description {
+        max-width: 600px;
+        margin: 0 auto;
+        color: #7b8196;
+        font-size: 15px;
+        line-height: 1.8;
+    }
+
+    .feature-card {
+        height: 100%;
+        padding: 26px;
+        background: white;
+        border: 1px solid #e9eaf4;
+        border-radius: 19px;
+        box-shadow: 0 8px 24px rgba(35,35,75,.04);
+        transition: transform .25s, box-shadow .25s;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(35,35,75,.10);
+        }
+
+    .feature-icon {
+        display: flex;
+        width: 53px;
+        height: 53px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .feature-purple {
+        background: #ede9fe;
+    }
+
+    .feature-blue {
+        background: #dbeafe;
+    }
+
+    .feature-green {
+        background: #d1fae5;
+    }
+
+    .feature-orange {
+        background: #ffedd5;
+    }
+
+    .feature-card h3 {
+        font-size: 17px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .feature-card p {
+        color: #7b8196;
+        font-size: 13px;
+        line-height: 1.8;
+        margin-bottom: 0;
+    }
+
+    .workflow-section {
+        margin-top: 60px;
+        padding: 40px;
+        border-radius: 23px;
+        background: #f5f3ff;
+        border: 1px solid #ede9fe;
+    }
+
+    .workflow-step {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+        margin-top: 25px;
+    }
+
+    .workflow-number {
+        display: flex;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        color: white;
+        background: linear-gradient(135deg, #4f46e5, #8b5cf6);
+        font-weight: 800;
+    }
+
+    .workflow-step h4 {
+        font-size: 15px;
+        font-weight: 800;
+        margin: 2px 0 6px;
+    }
+
+    .workflow-step p {
+        color: #7b8196;
+        font-size: 13px;
+        line-height: 1.7;
+        margin-bottom: 0;
+    }
+
+    .cta-section {
+        text-align: center;
+        padding: 55px 20px;
+        margin: 60px 0 25px;
+        background: linear-gradient(135deg, #312e81, #6d28d9);
+        border-radius: 23px;
+        color: white;
+    }
+
+        .cta-section h2 {
+            font-size: clamp(25px, 4vw, 33px);
+            font-weight: 800;
+            margin-bottom: 13px;
+        }
+
+        .cta-section p {
+            color: rgba(255,255,255,.82);
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+    @@media (max-width: 767px) {
+        .hero-section {
+            padding: 42px 23px;
+        }
+
+        .hero-title {
+            font-size: 34px;
+        }
+
+        .hero-visual {
+            max-width: 330px;
+            margin-top: 40px;
+        }
+
+        .section-block {
+            padding-top: 45px;
+        }
+
+        .workflow-section {
+            padding: 25px 20px;
+        }
+
+        .hero-buttons a {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="home-page">
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-7 hero-content">
+
+                <div class="hero-tag">
+                    ✨ YOUR SMART STUDY COMPANION
+                </div>
+
+                <h1 class="hero-title">
+                    Study Smarter.<br />
+                    Stay <span>Organized.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Manage assignments, track deadlines, and organize your
+                    academic workload in one place. Make every study session
+                    more productive with Student Task Manager.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a asp-controller="Dashboard"
+                       asp-action="Index"
+                       class="hero-btn-primary">
+                        🚀 Open Dashboard &nbsp; →
+                    </a>
+
+                    <a asp-controller="Assignments"
+                       asp-action="Index"
+                       class="hero-btn-secondary">
+                        📚 View Assignments
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-5">
+
+                <div class="hero-visual">
+
+                    <div class="visual-main-card">
+
+                        <div class="visual-heading">My Study Planner 📚</div>
+
+                        <div class="visual-subheading">
+                            A little progress every day.
+                        </div>
+
+                        <div class="visual-task">
+
+                            <div class="visual-task-icon">💻</div>
+
+                            <div>
+                                <div class="visual-task-title">Web Development</div>
+                                <div class="visual-task-date">Assignment task</div>
+                            </div>
+
+                            <span class="visual-status">Ready</span>
+
+                        </div>
+
+                        <div class="visual-task">
+
+                            <div class="visual-task-icon">🔐</div>
+
+                            <div>
+                                <div class="visual-task-title">Cyber Security</div>
+                                <div class="visual-task-date">Study and revise</div>
+                            </div>
+
+                        </div>
+
+                        <div class="visual-task">
+
+                            <div class="visual-task-icon">🗄️</div>
+
+                            <div>
+                                <div class="visual-task-title">Database Systems</div>
+                                <div class="visual-task-date">Project work</div>
+                            </div>
+
+                        </div>
+
+                        <div style="color:#7b8196; font-size:12px; margin-top:18px;">
+                            💜 Plan your work. Achieve your goals.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Features Section -->
+    <section class="section-block">
+
+        <div class="text-center mb-5">
+
+            <div class="section-eyebrow">Everything in one place</div>
+
+            <h2 class="section-heading">Everything You Need to Stay on Track</h2>
+
+            <p class="section-description">
+                Simple tools to help you organize academic tasks,
+                manage your time, and keep your assignments under control.
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="feature-card">
+
+                    <div class="feature-icon feature-purple">📝</div>
+
+                    <h3>Manage Assignments</h3>
+
+                    <p>
+                        Create, view, edit, and delete assignments
+                        from a single organized workspace.
+                    </p>
+
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="feature-card">
+
+                    <div class="feature-icon feature-blue">📅</div>
+
+                    <h3>Track Deadlines</h3>
+
+                    <p>
+                        Keep due dates visible and identify overdue
+                        assignments so important work is not forgotten.
+                    </p>
+
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="feature-card">
+
+                    <div class="feature-icon feature-green">📊</div>
+
+                    <h3>Monitor Progress</h3>
+
+                    <p>
+                        Use the dashboard to review assignment totals,
+                        pending tasks, and completed work.
+                    </p>
+
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="feature-card">
+
+                    <div class="feature-icon feature-orange">🔎</div>
+
+                    <h3>Search & Filter</h3>
+
+                    <p>
+                        Find assignments quickly by title, subject,
+                        or status using built-in search and filters.
+                    </p>
+
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Workflow Section -->
+    <section class="workflow-section">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-5">
+
+                <div class="section-eyebrow">Simple workflow</div>
+
+                <h2 class="section-heading">
+                    Make Your Study Routine Easier
+                </h2>
+
+                <p style="color:#7b8196; line-height:1.9;">
+                    Stay organized with a simple workflow designed
+                    to help you manage your academic responsibilities.
+                </p>
+
+            </div>
+
+            <div class="col-lg-7">
+
+                <div class="workflow-step">
+
+                    <div class="workflow-number">1</div>
+
+                    <div>
+                        <h4>Add Your Assignments</h4>
+                        <p>Enter the title, subject, description, due date, and status.</p>
+                    </div>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <div class="workflow-number">2</div>
+
+                    <div>
+                        <h4>Organize Your Work</h4>
+                        <p>Search assignments and filter them by their current status.</p>
+                    </div>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <div class="workflow-number">3</div>
+
+                    <div>
+                        <h4>Track Your Progress</h4>
+                        <p>Update task details and review your progress from the dashboard.</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-section">
+
+        <h2>Ready to Organize Your Studies?</h2>
+
+        <p>
+            Bring your assignments together and make your academic workflow
+            simpler, clearer, and more manageable.
+        </p>
+
+        <a asp-controller="Assignments"
+           asp-action="Index"
+           class="hero-btn-primary">
+            Get Started &nbsp; →
+        </a>
+
+    </section>
+
+</div>
