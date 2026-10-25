@@ -97,7 +97,7 @@ Important fields:
 ![Dashboard Page](screenshots/dashboard.png)
 
 ### Assignment Management Page
-![Assignments Page](screenshots/assignments.png)
+![Assignments Page](screenshots/assignment.png)
 
 ## Future Enhancements
 
