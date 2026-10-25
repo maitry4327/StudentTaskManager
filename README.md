@@ -90,7 +90,16 @@ Important fields:
 
 ## Project Screenshots
 
-Screenshots of the Home, Dashboard, and Assignment Management pages will be added.
+## Project Screenshots
+
+### Home Page
+![Home Page](screenshots/home.png)
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Assignment Management
+![Assignments Page](screenshots/assignments.png)
 
 ## Future Enhancements
 
