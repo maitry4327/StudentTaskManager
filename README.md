@@ -90,15 +90,13 @@ Important fields:
 
 ## Project Screenshots
 
-## Project Screenshots
-
 ### Home Page
 ![Home Page](screenshots/home.png)
 
-### Dashboard
-![Dashboard](screenshots/dashboard.png)
+### Dashboard Page
+![Dashboard Page](screenshots/dashboard.png)
 
-### Assignment Management
+### Assignment Management Page
 ![Assignments Page](screenshots/assignments.png)
 
 ## Future Enhancements
